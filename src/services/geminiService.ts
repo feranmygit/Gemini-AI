@@ -177,7 +177,9 @@ export async function generateTitle(messages: Message[]): Promise<string> {
     ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: `Generate a very short title (3-5 words max) for a conversation that starts with: "${firstUserMsg.slice(0, 200)}". Return only the title, no quotes, no punctuation at the end.`,
-      config: { thinkingConfig: { thinkingBudget: 0 } },
+      config: {
+        temperature: 0.2,
+      },
     })
   );
   return response.text?.trim() || 'New Conversation';
