@@ -91,7 +91,8 @@ const App: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const apiKeyMissing = !import.meta.env.VITE_API_KEY;
+  // In production the Gemini key lives on the server — never in the browser bundle
+  const apiKeyMissing = !import.meta.env.PROD && !import.meta.env.VITE_API_KEY;
   const activeConversation = conversations.find(c => c.id === activeId) || null;
 
   // ── Scroll to bottom ──────────────────────────────────────────────────────
@@ -259,16 +260,16 @@ const App: React.FC = () => {
     if (!text && !currentAttachments.length) return;
     if (isLoading) return;
 
-    if (settings.provider === 'gemini' && apiKeyMissing) {
-      setError('Gemini API key missing. Add it to .env, or switch to Groq/OpenRouter in ⚙ Settings — both are free.');
+    if (settings.provider === 'gemini' && apiKeyMissing && !import.meta.env.PROD) {
+      setError('Gemini API key missing. Add it to .env, or switch to Groq/OpenRouter in Settings — both are free.');
       return;
     }
     if (settings.provider === 'groq' && !settings.groqApiKey) {
-      setError('Groq API key not set. Go to ⚙ Settings → Groq and paste your free key from console.groq.com.');
+      setError('Groq API key not set. Go to Settings → Groq and paste your free key from console.groq.com.');
       return;
     }
     if (settings.provider === 'openrouter' && !settings.openrouterApiKey) {
-      setError('OpenRouter API key not set. Go to ⚙ Settings → OpenRouter and paste your free key from openrouter.ai.');
+      setError('OpenRouter API key not set. Go to Settings → OpenRouter and paste your free key from openrouter.ai.');
       return;
     }
 
