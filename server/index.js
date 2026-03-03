@@ -15,8 +15,8 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.static(join(__dirname, '../dist')));
 
 function getAI() {
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) throw new Error('GEMINI_API_KEY environment variable is not set on the server.');
+  const key = process.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+  if (!key) throw new Error('VITE_GEMINI_API_KEY (or GEMINI_API_KEY) environment variable is not set on the server.');
   return new GoogleGenAI({ apiKey: key });
 }
 
@@ -118,5 +118,5 @@ app.get('*', (_req, res) => {
 
 app.listen(PORT, () => {
   console.log(`\n🚀 Server running on http://localhost:${PORT}`);
-  console.log(`   API key: ${process.env.GEMINI_API_KEY ? '✅ set' : '❌ MISSING — set GEMINI_API_KEY'}\n`);
+  console.log(`   API key: ${(process.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY) ? '✅ set' : '❌ MISSING — set VITE_GEMINI_API_KEY (or GEMINI_API_KEY)'}\n`);
 });
