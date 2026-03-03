@@ -57,3 +57,15 @@ export enum AppModel {
   Pro = 'gemini-2.5-pro',
   FlashLite = 'gemini-flash-lite-latest',
 }
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+export interface User {
+  id: string;
+  email: string;
+  name: string | null;
+  avatarUrl: string | null;
+  createdAt: string;
+}
+
+export type AuthMode = 'signin' | 'signup';
+export type AuthState = 'loading' | 'guest' | 'authenticated';

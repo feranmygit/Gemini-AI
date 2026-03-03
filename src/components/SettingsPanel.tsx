@@ -17,10 +17,10 @@ const GEMINI_MODELS = [
 ];
 
 const PROVIDERS: { id: Provider; icon: string; label: string; sub: string }[] = [
-  { id: 'gemini',      icon: '✦', label: 'Google Gemini', sub: 'API key · Cloud' },
-  { id: 'groq',        icon: '⚡', label: 'Groq',          sub: 'Free · Very fast' },
-  { id: 'openrouter',  icon: '🔀', label: 'OpenRouter',    sub: 'Free models · Cloud' },
-  { id: 'ollama',      icon: '🦙', label: 'Ollama',        sub: 'Local · No internet' },
+  { id: 'gemini',      icon: '', label: 'Google Gemini', sub: 'API key · Cloud' },
+  { id: 'groq',        icon: '', label: 'Groq',          sub: 'Free · Very fast' },
+  { id: 'openrouter',  icon: '', label: 'OpenRouter',    sub: 'Free models · Cloud' },
+  { id: 'ollama',      icon: '', label: 'Ollama',        sub: 'Local · No internet' },
 ];
 
 const Label: React.FC<{ children: React.ReactNode; right?: React.ReactNode }> = ({ children, right }) => (
@@ -125,9 +125,9 @@ const SettingsPanel: React.FC<Props> = ({ settings, onUpdate, onClose }) => {
         background: 'linear-gradient(180deg, #151423 0%, #0f0e1a 100%)',
         border: '1px solid rgba(124,107,255,0.2)', borderRadius: 20, padding: 28,
         boxShadow: '0 24px 80px rgba(0,0,0,0.85)',
-        maxHeight: '90vh', overflowY: 'auto',
+        overflowY: 'auto',
         animation: 'fadeSlideIn 0.25s ease-out',
-      }}>
+      }} className="modal-panel">
 
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
@@ -166,10 +166,10 @@ const SettingsPanel: React.FC<Props> = ({ settings, onUpdate, onClose }) => {
           fontSize: 12, color: '#555', lineHeight: 1.7,
         }}>
           {{
-            gemini:     '✦ Gemini → your key stays on the server (secure in production)',
-            groq:       '⚡ Groq → browser calls Groq directly · key in your browser only',
-            openrouter: '🔀 OpenRouter → browser calls OpenRouter directly · key in your browser only',
-            ollama:     '🦙 Ollama → browser calls localhost · local dev only, not for production',
+            gemini:     'Gemini → your key stays on the server (secure in production)',
+            groq:       'Groq → browser calls Groq directly · key in your browser only',
+            openrouter: 'OpenRouter → browser calls OpenRouter directly · key in your browser only',
+            ollama:     'Ollama → browser calls localhost · local dev only, not for production',
           }[p]}
         </div>
 
@@ -205,7 +205,7 @@ const SettingsPanel: React.FC<Props> = ({ settings, onUpdate, onClose }) => {
               background: 'rgba(74,222,128,0.07)', border: '1px solid rgba(74,222,128,0.15)',
               fontSize: 12, color: '#86efac', lineHeight: 1.6,
             }}>
-              ✅ <strong>Free tier:</strong> 6,000 requests/day · No credit card needed · Works in production
+               <strong>Free tier:</strong> 6,000 requests/day · No credit card needed · Works in production
             </div>
           </div>
         )}
@@ -234,8 +234,8 @@ const SettingsPanel: React.FC<Props> = ({ settings, onUpdate, onClose }) => {
               background: 'rgba(74,222,128,0.07)', border: '1px solid rgba(74,222,128,0.15)',
               fontSize: 12, color: '#86efac', lineHeight: 1.6,
             }}>
-              ✅ <strong>Free models</strong> cost $0 · Works in production · 200 req/day<br/>
-              ⚡ <strong>Auto</strong> always picks the best available free model automatically<br/>
+               <strong>Free models</strong> cost $0 · Works in production · 200 req/day<br/>
+               <strong>Auto</strong> always picks the best available free model automatically<br/>
               <a href="https://openrouter.ai/models?q=:free" target="_blank" rel="noopener noreferrer"
                 style={{ color: '#6ee7b7', fontSize: 11 }}>↗ See latest free models at openrouter.ai</a>
             </div>
@@ -284,7 +284,7 @@ const SettingsPanel: React.FC<Props> = ({ settings, onUpdate, onClose }) => {
               background: 'rgba(251,191,36,0.07)', border: '1px solid rgba(251,191,36,0.18)',
               fontSize: 12, color: '#fde68a', lineHeight: 1.6,
             }}>
-              ⚠️ Ollama only works on <strong>your local machine</strong>. For production use Groq or OpenRouter instead.
+               Ollama only works on <strong>your local machine</strong>. For production use Groq or OpenRouter instead.
             </div>
           </div>
         )}

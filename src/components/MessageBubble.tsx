@@ -266,7 +266,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
           }}
         >
           <img src={lightbox} alt="Full size"
-            style={{ maxWidth: '90vw', maxHeight: '90vh', borderRadius: 16, objectFit: 'contain', boxShadow: '0 24px 80px rgba(0,0,0,0.8)' }}
+            style={{ maxWidth: '90vw', maxHeight: '90dvh', borderRadius: 16, objectFit: 'contain', boxShadow: '0 24px 80px rgba(0,0,0,0.8)' }}
             onClick={e => e.stopPropagation()}
           />
           <button onClick={() => setLightbox(null)} style={{

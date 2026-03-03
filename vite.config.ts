@@ -6,17 +6,14 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     define: {
-      // Still expose key in dev so local Gemini/Ollama direct calls work
-      'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY || env.API_KEY || ''),
-      'process.env.IS_PRODUCTION': JSON.stringify(mode === 'production'),
+      // Expose Gemini key in dev only — in production it stays on the server
+      'import.meta.env.VITE_API_KEY': JSON.stringify(
+        mode === 'production' ? '' : (env.GEMINI_API_KEY || env.VITE_API_KEY || '')
+      ),
     },
     server: {
       proxy: {
-        // In dev, forward /api calls to Express backend
-        '/api': {
-          target: 'http://localhost:3001',
-          changeOrigin: true,
-        },
+        '/api': { target: 'http://localhost:3001', changeOrigin: true },
       },
     },
   };
