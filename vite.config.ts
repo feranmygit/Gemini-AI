@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
     define: {
       // Expose Gemini key in dev only — in production it stays on the server
       'import.meta.env.VITE_API_KEY': JSON.stringify(
-        mode === 'production' ? '' : (env.GEMINI_API_KEY || env.VITE_API_KEY || '')
+        mode === 'production' ? '' : (env.VITE_GEMINI_API_KEY || env.VITE_API_KEY || '')
       ),
     },
     server: {

@@ -505,7 +505,7 @@ const App: React.FC = () => {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             {/* Provider badge */}
-            <div style={{ fontSize: 11, padding: '3px 10px', borderRadius: 20, background: pc.bg, border: pc.border, color: pc.color, fontFamily: "'DM Mono', monospace", display: 'flex', alignItems: 'center', gap: 5 }}>
+            <div className="hidden md:flex" style={{ fontSize: 11, padding: '3px 10px', borderRadius: 20, background: pc.bg, border: pc.border, color: pc.color, fontFamily: "'DM Mono', monospace", alignItems: 'center', gap: 5 }}>
               {providerIcons[settings.provider]} {activeModelLabel()}
             </div>
             {/* Settings */}
