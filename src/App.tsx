@@ -47,7 +47,7 @@ function createConversation(settings: AppSettings): Conversation {
 function friendlyError(raw: string): string {
   if (/503|overloaded|unavailable|exception parsing/i.test(raw)) return 'AI servers are overloaded. Please wait a moment, or switch provider in ⚙ Settings.';
   if (/429|rate.?limit|quota|too many/i.test(raw)) return 'Rate limit reached. Please wait a minute, or switch to a different provider in ⚙ Settings.';
-  if (/401|api.?key|authentication/i.test(raw)) return 'Invalid API key. Check your key in ⚙ Settings.';
+  if (/401|api.?key|authentication/i.test(raw)) return 'Invalid API key. Check your key in Settings.';
   if (/request too large|too many tokens|context.?length|maximum context/i.test(raw)) return 'Message too long for this model. Try Mixtral 8x7B in ⚙ Settings → Groq (32k tokens), or start a new conversation.';
   return raw;
 }
@@ -128,7 +128,7 @@ const App: React.FC = () => {
 
         // Migrate any local guest conversations to the cloud
         const count = await migrateLocalToCloud(changedUser.id);
-        if (count > 0) setMigrationNote(`${count} guest conversation${count > 1 ? 's' : ''} saved to your account!`);
+        if (count > 0) setMigrationNote(`${count} conversation${count > 1 ? 's' : ''} saved to your account!`);
 
         // Load all cloud conversations
         const cloud = await loadCloudConversations(changedUser.id);
