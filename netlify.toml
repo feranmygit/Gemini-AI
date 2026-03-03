@@ -1,0 +1,16 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Redirect all non-API routes to index.html for React SPA
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
