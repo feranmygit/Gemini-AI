@@ -62,7 +62,7 @@ export async function sendOllamaMessage(
   ];
 
   const body = {
-    model: settings.model.replace('ollama:', ''),
+    model: (settings.ollamaModel || 'llama3.2').replace('ollama:', ''),
     messages,
     stream: !!(settings.streaming && onChunk),
     options: { temperature: settings.temperature },
