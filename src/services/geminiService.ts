@@ -5,7 +5,7 @@ let chatInstance: Chat | null = null;
 let currentSettings: AppSettings | null = null;
 
 function getAI(): GoogleGenAI {
-  return new GoogleGenAI({ apiKey: process.env.API_KEY });
+  return new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 }
 
 export function createNewChat(settings: AppSettings): void {
