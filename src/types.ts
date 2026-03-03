@@ -34,11 +34,22 @@ export interface Conversation {
   systemPrompt: string;
 }
 
+export type Provider = 'gemini' | 'groq' | 'openrouter' | 'ollama';
+
 export interface AppSettings {
   model: string;
   systemPrompt: string;
   temperature: number;
   streaming: boolean;
+  provider: Provider;
+  // Ollama
+  ollamaModel: string;
+  // Groq
+  groqApiKey: string;
+  groqModel: string;
+  // OpenRouter
+  openrouterApiKey: string;
+  openrouterModel: string;
 }
 
 export enum AppModel {

@@ -1,53 +1,90 @@
 # Gemini AI Studio
 
-A beautiful, full-featured AI chat interface powered by Google Gemini.
+A full-featured AI chat app with Google Gemini + local Ollama support.
 
-## Features
-
-- Multi-conversation management with auto-generated titles
-- Real-time streaming responses
-- Rich markdown rendering (code blocks, tables, lists, etc.)
-- Configurable settings: model, temperature, system prompt, streaming
-- Dark mode UI with elegant design
-- Responsive (mobile + desktop)
-
-## Setup
-
-### 1. Install dependencies
+## Quick Start (Local Dev)
 
 ```bash
 npm install
+cp .env.example .env        # add your GEMINI_API_KEY
+npm run dev                 # frontend only (Gemini direct)
 ```
 
-### 2. Configure your API key
-
+For Ollama local AI (no API key needed):
 ```bash
-cp .env
-```
-
-Then open `.env` and replace `your_gemini_api_key_here` with your actual API key.
-
-Get a free key at: https://aistudio.google.com/apikey
-
-### 3. Start the development server
-
-```bash
+ollama serve                # in a separate terminal
 npm run dev
+# Then go to Settings → Ollama (Local)
 ```
 
-Open http://localhost:5173 in your browser.
+---
 
-## Models Available
+## Deploy to Production
 
-| Model | Use Case |
-|-------|----------|
-| Gemini 2.5 Flash | Fast, efficient — great for most tasks |
-| Gemini 2.5 Pro | Most capable — complex reasoning & analysis |
-| Flash Lite | Fastest — lightweight tasks |
+In production, the backend handles your API key so it's never exposed to users.
 
-## Build for Production
+### Option A — Railway (easiest, free tier)
+
+1. Push your code to GitHub
+2. Go to [railway.app](https://railway.app) → New Project → Deploy from GitHub
+3. Add environment variable: `GEMINI_API_KEY=your_key_here`
+4. Railway auto-detects Node.js and runs `npm start`
+5. Done — your app is live!
+
+### Option B — Render (free tier)
+
+1. Push to GitHub
+2. Go to [render.com](https://render.com) → New Web Service
+3. Connect your repo
+4. Set:
+   - Build command: `npm install && npm run build`
+   - Start command: `npm start`
+5. Add environment variable: `GEMINI_API_KEY=your_key_here`
+6. Deploy!
+
+### Option C — VPS / your own server
 
 ```bash
+git clone your-repo
+cd gemini-app
+npm install
 npm run build
-npm run preview
+
+# Set your key
+export GEMINI_API_KEY=your_key_here
+
+# Start (port 3001 by default, or set PORT=80)
+npm start
 ```
+
+Use nginx or Caddy as a reverse proxy in front of it.
+
+### Option D — Vercel / Netlify (frontend only)
+
+These platforms serve static files only, not Node.js servers.
+You'd need to host the backend separately (Railway, Render, etc.)
+and update `API` in `src/services/apiService.ts` to point to it.
+
+---
+
+## Environment Variables
+
+| Variable | Where | Description |
+|----------|-------|-------------|
+| `GEMINI_API_KEY` | Server only | Your Google AI Studio key |
+
+**The key is NEVER sent to the browser in production.**
+
+---
+
+## How it Works
+
+```
+Browser  ──/api/chat──▶  Express Server  ──▶  Gemini API
+                              ▲
+                         GEMINI_API_KEY
+                         (server only)
+```
+
+In development, the frontend can also talk to Gemini directly (key in .env)
+or to a local Ollama instance.
