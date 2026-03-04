@@ -41,7 +41,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 20px 16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ width: 30, height: 30, borderRadius: 9, background: 'linear-gradient(135deg, #7c6bff, #b06bff)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15 }}>✦</div>
-            <span style={{ fontFamily: "'DM Serif Display', serif", fontSize: 17, color: '#e8e6f0' }}>AI Studio</span>
+            <span style={{ fontFamily: "'DM Serif Display', serif", fontSize: 17,  }}>AI Studio</span>
           </div>
           <button className='block md:hidden' onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--app-text-muted)', cursor: 'pointer', fontSize: 16, padding: 4 }}>✕</button>
         </div>
