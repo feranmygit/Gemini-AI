@@ -82,10 +82,57 @@ const ApiKeyInput: React.FC<{
           onFocus={e => (e.target.style.borderColor = 'rgba(124,107,255,0.5)')}
           onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.1)')}
         />
-        <button onClick={() => setShow(s => !s)} style={{
-          position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
-          background: 'none', border: 'none', color: 'var(--app-text-muted)', cursor: 'pointer', fontSize: 13,
-        }}>{show ? '🙈' : '👁'}</button>
+        <button
+        type="button"
+        onClick={() => setShow(s => !s)}
+        style={{
+          position: 'absolute',
+          right: 10,
+          top: '50%',
+          transform: 'translateY(-50%)',
+          background: 'none',
+          border: 'none',
+          color: 'var(--app-text-muted)',
+          cursor: 'pointer',
+          fontSize: 13,
+        }}
+        >
+          {show ? (
+            // Eye Off
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M10.73 5.073A11 11 0 0 1 12 5c4.664 0 8.4 2.903 10 7a11.6 11.6 0 0 1-1.555 2.788" />
+              <path d="M6.52 6.519C4.48 7.764 2.9 9.693 2 12c1.6 4.097 5.336 7 10 7a10.44 10.44 0 0 0 5.48-1.52" />
+              <path d="m4 4l16 16" />
+            </svg>
+          ) : (
+            // Eye
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          )}
+        </button>
+
       </div>
       <a href={link} target="_blank" rel="noopener noreferrer" style={{
         fontSize: 11, color: '#7c6bff', display: 'inline-block', marginTop: 5, textDecoration: 'none',

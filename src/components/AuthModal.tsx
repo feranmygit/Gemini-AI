@@ -158,7 +158,7 @@ const AuthModal: React.FC<Props> = ({ initialMode = 'signin', onSuccess, onClose
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 }}>
           <div>
-            <div style={{ fontSize: 26, marginBottom: 6 }}>{mode === 'signin' ? '👋' : '✨'}</div>
+            <div style={{ fontSize: 26, marginBottom: 6 }}>{mode === 'signin' ? '👋' : ' '}</div>
             <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 22, color: '#e8e6f0', margin: 0 }}>
               {mode === 'signin' ? 'Welcome back' : 'Create account'}
             </h2>
