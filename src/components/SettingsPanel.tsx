@@ -23,6 +23,12 @@ const PROVIDERS: { id: Provider; icon: string; label: string; sub: string }[] = 
   { id: 'ollama',      icon: '', label: 'Ollama',        sub: 'Local · No internet' },
 ];
 
+const THEME_OPTIONS: { id: 'dark' | 'light' | 'system'; label: string; sub: string }[] = [
+  { id: 'dark', label: 'Dark', sub: 'Default look' },
+  { id: 'light', label: 'Light', sub: 'Bright workspace' },
+  { id: 'system', label: 'System', sub: 'Follow device' },
+];
+
 const Label: React.FC<{ children: React.ReactNode; right?: React.ReactNode }> = ({ children, right }) => (
   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
     <span style={{ fontSize: 12, fontWeight: 600, color: '#7c6bff', letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
@@ -45,7 +51,7 @@ const ModelList: React.FC<{
         border: selected === m.value ? '1px solid rgba(124,107,255,0.45)' : '1px solid rgba(255,255,255,0.06)',
       }}>
         <div style={{ fontSize: 13, fontWeight: 500, color: selected === m.value ? '#c4b8ff' : '#888' }}>{m.label}</div>
-        <div style={{ fontSize: 11, color: '#555', marginTop: 2 }}>{m.desc}</div>
+        <div style={{ fontSize: 11, color: 'var(--app-text-muted)', marginTop: 2 }}>{m.desc}</div>
       </div>
     ))}
   </div>
@@ -69,8 +75,8 @@ const ApiKeyInput: React.FC<{
           placeholder={placeholder}
           style={{
             width: '100%', padding: '10px 40px 10px 12px',
-            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 10, color: '#ddd9f0', fontSize: 13,
+            background: 'var(--app-surface)', border: '1px solid var(--app-border-soft)',
+            borderRadius: 10, color: 'var(--app-text)', fontSize: 13,
             fontFamily: "'DM Mono', monospace", outline: 'none', boxSizing: 'border-box' as const,
           }}
           onFocus={e => (e.target.style.borderColor = 'rgba(124,107,255,0.5)')}
@@ -78,7 +84,7 @@ const ApiKeyInput: React.FC<{
         />
         <button onClick={() => setShow(s => !s)} style={{
           position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
-          background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: 13,
+          background: 'none', border: 'none', color: 'var(--app-text-muted)', cursor: 'pointer', fontSize: 13,
         }}>{show ? '🙈' : '👁'}</button>
       </div>
       <a href={link} target="_blank" rel="noopener noreferrer" style={{
@@ -118,11 +124,11 @@ const SettingsPanel: React.FC<Props> = ({ settings, onUpdate, onClose }) => {
     <div style={{
       position: 'fixed', inset: 0, zIndex: 50, display: 'flex',
       alignItems: 'center', justifyContent: 'center',
-      background: 'rgba(0,0,0,0.78)', backdropFilter: 'blur(8px)', padding: 20,
+      background: 'var(--app-overlay)', backdropFilter: 'blur(8px)', padding: 20,
     }} onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{
         width: '100%', maxWidth: 550,
-        background: 'linear-gradient(180deg, #151423 0%, #0f0e1a 100%)',
+        background: 'var(--app-panel-strong)',
         border: '1px solid rgba(124,107,255,0.2)', borderRadius: 20, padding: 28,
         boxShadow: '0 24px 80px rgba(0,0,0,0.85)',
         overflowY: 'auto',
@@ -131,10 +137,10 @@ const SettingsPanel: React.FC<Props> = ({ settings, onUpdate, onClose }) => {
 
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 20, color: '#e8e6f0' }}>Settings</h2>
+          <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 20, color: 'var(--app-text)' }}>Settings</h2>
           <button onClick={onClose} style={{
-            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 8, color: '#888', cursor: 'pointer', padding: '4px 10px', fontSize: 13,
+            background: 'var(--app-surface)', border: '1px solid var(--app-border-soft)',
+            borderRadius: 8, color: 'var(--app-text-soft)', cursor: 'pointer', padding: '4px 10px', fontSize: 13,
           }}>✕</button>
         </div>
 
@@ -162,8 +168,8 @@ const SettingsPanel: React.FC<Props> = ({ settings, onUpdate, onClose }) => {
         {/* Connection info */}
         <div style={{
           marginBottom: 20, padding: '10px 14px', borderRadius: 10,
-          background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)',
-          fontSize: 12, color: '#555', lineHeight: 1.7,
+          background: 'var(--app-surface)', border: '1px solid var(--app-border-soft)',
+          fontSize: 12, color: 'var(--app-text-soft)', lineHeight: 1.7,
         }}>
           {{
             gemini:     'Gemini → your key stays on the server (secure in production)',
@@ -252,8 +258,8 @@ const SettingsPanel: React.FC<Props> = ({ settings, onUpdate, onClose }) => {
                   {checking ? 'Checking…' : ollamaOnline ? 'Running' : 'Not found'}
                 </span>
                 <button onClick={checkOllama} style={{
-                  fontSize: 11, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: 5, color: '#888', cursor: 'pointer', padding: '2px 8px',
+                  fontSize: 11, background: 'var(--app-surface)', border: '1px solid var(--app-border-soft)',
+                  borderRadius: 5, color: 'var(--app-text-soft)', cursor: 'pointer', padding: '2px 8px',
                 }}>↻</button>
               </div>
             }>Local Model</Label>
@@ -289,6 +295,35 @@ const SettingsPanel: React.FC<Props> = ({ settings, onUpdate, onClose }) => {
           </div>
         )}
 
+        {/* Appearance */}
+        <div style={{ marginBottom: 24 }}>
+          <Label>Appearance</Label>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+            {THEME_OPTIONS.map(opt => (
+              <button
+                key={opt.id}
+                onClick={() => onUpdate({ ...settings, theme: opt.id })}
+                style={{
+                  textAlign: 'left',
+                  padding: '10px 12px',
+                  borderRadius: 11,
+                  cursor: 'pointer',
+                  background: settings.theme === opt.id ? 'rgba(124,107,255,0.14)' : 'rgba(255,255,255,0.02)',
+                  border: settings.theme === opt.id ? '1px solid rgba(124,107,255,0.45)' : '1px solid rgba(255,255,255,0.06)',
+                  transition: 'all 0.15s',
+                }}
+              >
+                <div style={{ fontSize: 13, fontWeight: 600, color: settings.theme === opt.id ? '#c4b8ff' : '#9a94b0' }}>
+                  {opt.label}
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--app-text-muted)', marginTop: 2 }}>
+                  {opt.sub}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Temperature */}
         <div style={{ marginBottom: 24 }}>
           <Label right={
@@ -320,7 +355,7 @@ const SettingsPanel: React.FC<Props> = ({ settings, onUpdate, onClose }) => {
               }} />
             </button>
           </div>
-          <p style={{ fontSize: 11, color: '#555', marginTop: 6 }}>Stream responses word by word</p>
+          <p style={{ fontSize: 11, color: 'var(--app-text-soft)', marginTop: 6 }}>Stream responses word by word</p>
         </div>
 
         {/* System Prompt */}
@@ -331,13 +366,13 @@ const SettingsPanel: React.FC<Props> = ({ settings, onUpdate, onClose }) => {
             placeholder="You are a helpful AI assistant..."
             style={{
               width: '100%', padding: '11px 13px',
-              background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: 11, color: '#c4c0d8', fontSize: 13,
+              background: 'var(--app-surface)', border: '1px solid var(--app-border-soft)',
+              borderRadius: 11, color: 'var(--app-text)', fontSize: 13,
               fontFamily: "'DM Mono', monospace", resize: 'vertical', outline: 'none', lineHeight: 1.6,
               boxSizing: 'border-box' as const,
             }}
             onFocus={e => (e.target.style.borderColor = 'rgba(124,107,255,0.4)')}
-            onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.08)')}
+            onBlur={e => (e.target.style.borderColor = 'var(--app-border-soft)')}
           />
         </div>
       </div>

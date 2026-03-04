@@ -35,6 +35,7 @@ export interface Conversation {
 }
 
 export type Provider = 'gemini' | 'groq' | 'openrouter' | 'ollama';
+export type ThemeMode = 'dark' | 'light' | 'system';
 
 export interface AppSettings {
   model: string;
@@ -42,6 +43,7 @@ export interface AppSettings {
   temperature: number;
   streaming: boolean;
   provider: Provider;
+  theme: ThemeMode;
   // Ollama
   ollamaModel: string;
   // Groq

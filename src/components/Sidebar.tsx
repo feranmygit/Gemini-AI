@@ -24,11 +24,11 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <>
       {isOpen && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 20, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }} onClick={onClose} />
+        <div style={{ position: 'fixed', inset: 0, zIndex: 20, background: 'var(--app-overlay)', backdropFilter: 'blur(4px)' }} onClick={onClose} />
       )}
 
       <aside style={{
-        background: 'linear-gradient(180deg, #0f0e1a 0%, #0a0a15 100%)',
+        background: 'var(--app-panel-strong)',
         borderRight: '1px solid rgba(120,100,255,0.12)',
         width: 272, flexShrink: 0,
         position: 'fixed', left: 0, top: 0, zIndex: 30,
@@ -43,7 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <div style={{ width: 30, height: 30, borderRadius: 9, background: 'linear-gradient(135deg, #7c6bff, #b06bff)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15 }}>✦</div>
             <span style={{ fontFamily: "'DM Serif Display', serif", fontSize: 17, color: '#e8e6f0' }}>AI Studio</span>
           </div>
-          <button className='block md:hidden' onClick={onClose} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: 16, padding: 4 }}>✕</button>
+          <button className='block md:hidden' onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--app-text-muted)', cursor: 'pointer', fontSize: 16, padding: 4 }}>✕</button>
         </div>
 
         {/* New chat */}
@@ -65,7 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         {/* Conversations */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '0 10px' }}>
           {conversations.length === 0 ? (
-            <div style={{ color: '#333', fontSize: 12, textAlign: 'center', padding: '28px 16px' }}>No conversations yet</div>
+            <div style={{ color: 'var(--app-text-muted)', fontSize: 12, textAlign: 'center', padding: '28px 16px' }}>No conversations yet</div>
           ) : (
             conversations.slice().sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()).map(conv => (
               <div key={conv.id} onClick={() => { onSelect(conv.id); onClose(); }} style={{
@@ -80,15 +80,15 @@ const Sidebar: React.FC<SidebarProps> = ({
               >
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 13, fontWeight: 500, color: activeId === conv.id ? '#c4b8ff' : '#9a94b0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{conv.title}</div>
-                  <div style={{ fontSize: 11, color: '#383650', marginTop: 2 }}>{conv.messages.length} msg{conv.messages.length !== 1 ? 's' : ''}</div>
+                  <div style={{ fontSize: 11, color: 'var(--app-text-muted)', marginTop: 2 }}>{conv.messages.length} msg{conv.messages.length !== 1 ? 's' : ''}</div>
                 </div>
                 <button onClick={e => { e.stopPropagation(); onDelete(conv.id); }} className="del-btn" style={{
-                  background: 'none', border: 'none', color: '#444', cursor: 'pointer',
+                  background: 'none', border: 'none', color: 'var(--app-text-muted)', cursor: 'pointer',
                   padding: '2px 5px', borderRadius: 4, fontSize: 12,
                   opacity: 0, transition: 'all 0.15s', flexShrink: 0,
                 }}
                   onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = '#ff6b6b'}
-                  onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = '#444'}
+                  onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = 'var(--app-text-muted)'}
                 >✕</button>
               </div>
             ))
@@ -96,18 +96,18 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* Bottom auth section */}
-        <div style={{ padding: '14px', borderTop: '1px solid rgba(120,100,255,0.08)' }}>
+        <div style={{ padding: '14px', borderTop: '1px solid var(--app-border)' }}>
           {authState === 'loading' && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px' }}>
               <div style={{ width: 8, height: 8, borderRadius: '50%', border: '2px solid rgba(124,107,255,0.4)', borderTopColor: '#7c6bff', animation: 'spin 0.8s linear infinite' }} />
-              <div style={{ fontSize: 12, color: '#444' }}>Loading…</div>
+              <div style={{ fontSize: 12, color: 'var(--app-text-muted)' }}>Loading…</div>
             </div>
           )}
 
           {authState === 'guest' && (
             <div>
-              <div style={{ fontSize: 11, color: '#555', marginBottom: 10, lineHeight: 1.5, padding: '0 2px' }}>
-                ⚠ Guest mode — chats are lost on page refresh
+              <div style={{ fontSize: 11, color: 'var(--app-text-soft)', marginBottom: 10, lineHeight: 1.5, padding: '0 2px' }}>
+                Guest mode — chats are lost on page refresh
               </div>
               <div style={{ display: 'flex', gap: 7 }}>
                 <button onClick={onSignUp} style={{
@@ -119,7 +119,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <button onClick={onSignIn} style={{
                   flex: 1, padding: '9px 10px', borderRadius: 10,
                   background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
-                  color: '#888', fontSize: 12, cursor: 'pointer',
+                  color: 'var(--app-text-soft)', fontSize: 12, cursor: 'pointer',
                 }}>Sign in</button>
               </div>
             </div>
@@ -148,10 +148,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                 </div>
               </div>
               <button onClick={onSignOut} title="Sign out" style={{
-                background: 'none', border: 'none', color: '#444', cursor: 'pointer', padding: 6, borderRadius: 7, transition: 'all 0.15s',
+                background: 'none', border: 'none', color: 'var(--app-text-muted)', cursor: 'pointer', padding: 6, borderRadius: 7, transition: 'all 0.15s',
               }}
                 onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,107,107,0.1)'; (e.currentTarget as HTMLButtonElement).style.color = '#ff9a9a'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'none'; (e.currentTarget as HTMLButtonElement).style.color = '#444'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'none'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--app-text-muted)'; }}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>

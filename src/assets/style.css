@@ -13,6 +13,28 @@
 @layer base {
   :root {
     --radius: 0.5rem;
+    color-scheme: light;
+
+    /* App theme tokens (light) */
+    --app-bg: #f4f6fb;
+    --app-panel: rgba(255, 255, 255, 0.9);
+    --app-panel-strong: #ffffff;
+    --app-surface: rgba(17, 24, 39, 0.04);
+    --app-surface-hover: rgba(17, 24, 39, 0.08);
+    --app-text: #1f2330;
+    --app-text-soft: #4b5565;
+    --app-text-muted: #707a8a;
+    --app-border: rgba(99, 102, 241, 0.16);
+    --app-border-soft: rgba(17, 24, 39, 0.1);
+    --app-overlay: rgba(12, 16, 30, 0.5);
+    --app-markdown-code-bg: rgba(124, 107, 255, 0.08);
+    --app-markdown-pre-bg: rgba(17, 24, 39, 0.04);
+    --app-success-bg: rgba(16, 185, 129, 0.12);
+    --app-success-border: rgba(16, 185, 129, 0.24);
+    --app-success-text: #047857;
+    --app-danger-bg: rgba(239, 68, 68, 0.1);
+    --app-danger-border: rgba(239, 68, 68, 0.24);
+    --app-danger-text: #b91c1c;
 
     /* Light Theme */
     --background: 0 0% 100%;
@@ -63,6 +85,27 @@
   }
 
   .dark {
+    color-scheme: dark;
+    --app-bg: #0a0a15;
+    --app-panel: rgba(10, 10, 15, 0.88);
+    --app-panel-strong: #0f0e1a;
+    --app-surface: rgba(255, 255, 255, 0.04);
+    --app-surface-hover: rgba(255, 255, 255, 0.08);
+    --app-text: #ddd9f0;
+    --app-text-soft: #9a94b0;
+    --app-text-muted: #666;
+    --app-border: rgba(124, 107, 255, 0.2);
+    --app-border-soft: rgba(255, 255, 255, 0.08);
+    --app-overlay: rgba(0, 0, 0, 0.78);
+    --app-markdown-code-bg: rgba(124, 107, 255, 0.1);
+    --app-markdown-pre-bg: rgba(0, 0, 0, 0.4);
+    --app-success-bg: rgba(74, 222, 128, 0.08);
+    --app-success-border: rgba(74, 222, 128, 0.2);
+    --app-success-text: #86efac;
+    --app-danger-bg: rgba(255, 107, 107, 0.08);
+    --app-danger-border: rgba(255, 107, 107, 0.25);
+    --app-danger-text: #ff9a9a;
+
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
 
@@ -108,6 +151,8 @@
     margin: 0;
     min-height: 100vh;
     min-height: 100dvh;
+    background: var(--app-bg);
+    color: var(--app-text);
   }
 
   #root {
@@ -120,6 +165,7 @@
     height: 100vh;
     height: 100dvh;
     overflow: hidden;
+    background: var(--app-bg);
   }
 
   .modal-panel {

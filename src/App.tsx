@@ -16,18 +16,27 @@ import {
   loadCloudConversations, saveConversationCloud, saveMessageCloud,
   deleteConversationCloud, updateConversationTitleCloud, migrateLocalToCloud,
 } from './services/storageService';
-import { Message, Conversation, AppSettings, AppModel, AttachedFile, GeneratedImage, User, AuthMode, AuthState } from './types';
+import { Message, Conversation, AppSettings, AppModel, AttachedFile, GeneratedImage, User, AuthMode, AuthState, ThemeMode } from './types';
 
 // ─── Settings persistence ─────────────────────────────────────────────────────
 function loadSavedSettings(): Partial<AppSettings> {
   try { const s = localStorage.getItem('ai-studio-settings'); return s ? JSON.parse(s) : {}; }
   catch { return {}; }
 }
+function sanitizeTheme(theme: unknown): ThemeMode {
+  if (theme === 'light' || theme === 'dark' || theme === 'system') return theme;
+  return 'dark';
+}
+function getSystemTheme(): 'light' | 'dark' {
+  if (typeof window === 'undefined' || !window.matchMedia) return 'dark';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
 const saved = loadSavedSettings();
 const DEFAULT_SETTINGS: AppSettings = {
   model: AppModel.Flash,
   systemPrompt: 'You are a helpful, knowledgeable, and thoughtful AI assistant. Be concise yet thorough, and use markdown formatting when appropriate.',
   temperature: 1.0, streaming: true, provider: 'gemini',
+  theme: sanitizeTheme(saved.theme),
   ollamaModel: saved.ollamaModel || 'llama3.2',
   groqApiKey: saved.groqApiKey || '',
   groqModel: saved.groqModel || 'llama-3.3-70b-versatile',
@@ -87,6 +96,7 @@ const App: React.FC = () => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [showSavePrompt, setShowSavePrompt] = useState(false);
   const [migrationNote, setMigrationNote] = useState<string | null>(null);
+  const [systemTheme, setSystemTheme] = useState<'light' | 'dark'>(getSystemTheme());
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -102,6 +112,23 @@ const App: React.FC = () => {
   useEffect(() => {
     try { localStorage.setItem('ai-studio-settings', JSON.stringify(settings)); } catch { }
   }, [settings]);
+
+  // Apply selected theme (persisted in settings) to root element
+  useEffect(() => {
+    const root = document.documentElement;
+    const resolved = settings.theme === 'system' ? systemTheme : settings.theme;
+    root.classList.toggle('dark', resolved === 'dark');
+  }, [settings.theme, systemTheme]);
+
+  // Track OS color-scheme changes for "system" mode
+  useEffect(() => {
+    if (!window.matchMedia) return;
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const onChange = () => setSystemTheme(media.matches ? 'dark' : 'light');
+    onChange();
+    media.addEventListener('change', onChange);
+    return () => media.removeEventListener('change', onChange);
+  }, []);
 
   // ── Auth init + listener ──────────────────────────────────────────────────
   useEffect(() => {
@@ -469,8 +496,8 @@ const App: React.FC = () => {
   const showKeyWarning = (settings.provider === 'gemini' && apiKeyMissing) || (settings.provider === 'groq' && !settings.groqApiKey) || (settings.provider === 'openrouter' && !settings.openrouterApiKey);
   const keyWarningMsg: Record<string, string> = {
     gemini:     'Gemini API key missing. Add to .env — or switch to Groq/OpenRouter (free, no server needed).',
-    groq:       'Groq API key not set. Go to ⚙ Settings → Groq and paste your free key from console.groq.com.',
-    openrouter: 'OpenRouter API key not set. Go to ⚙ Settings → OpenRouter and paste your free key from openrouter.ai.',
+    groq:       'Groq API key not set. Go to Settings → Groq and paste your free key from console.groq.com.',
+    openrouter: 'OpenRouter API key not set. Go to Settings → OpenRouter and paste your free key from openrouter.ai.',
   };
 
   return (
@@ -495,12 +522,12 @@ const App: React.FC = () => {
         {/* Top bar */}
         <div style={{
           height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '0 20px', borderBottom: '1px solid rgba(120,100,255,0.08)',
-          background: 'rgba(10,10,15,0.8)', backdropFilter: 'blur(12px)', flexShrink: 0, gap: 12,
+          padding: '0 20px', borderBottom: '1px solid var(--app-border)',
+          background: 'var(--app-panel)', backdropFilter: 'blur(12px)', flexShrink: 0, gap: 12,
         }}>
           <div className='hidden md:block' style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <button className='block md:hidden' onClick={() => setSidebarOpen(true)} style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', fontSize: 18, padding: 4 }}>☰</button>
-            <span className='hidden md:block' style={{ fontSize: 13, color: '#555', fontFamily: "'DM Mono', monospace" }}>
+            <button className='block md:hidden' onClick={() => setSidebarOpen(true)} style={{ background: 'none', border: 'none', color: 'var(--app-text-muted)', cursor: 'pointer', fontSize: 18, padding: 4 }}>☰</button>
+            <span className='hidden md:block' style={{ fontSize: 13, color: 'var(--app-text-soft)', fontFamily: "'DM Mono', monospace" }}>
               {activeConversation?.title || 'start a conversation'}
             </span>
           </div>
@@ -511,11 +538,11 @@ const App: React.FC = () => {
             </div>
             {/* Settings */}
             <button onClick={() => setShowSettings(true)} style={{
-              background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: 8, color: '#777', cursor: 'pointer', padding: '6px 12px', fontSize: 13, transition: 'all 0.15s',
+              background: 'var(--app-surface)', border: '1px solid var(--app-border-soft)',
+              borderRadius: 8, color: 'var(--app-text-soft)', cursor: 'pointer', padding: '6px 12px', fontSize: 13, transition: 'all 0.15s',
             }}
-              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}
-              onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+              onMouseEnter={e => (e.currentTarget.style.background = 'var(--app-surface-hover)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'var(--app-surface)')}
             >Settings</button>
             {/* >⚙ Settings</button> */}
             {/* User menu (authenticated) or Sign in button (guest) */}
@@ -542,11 +569,11 @@ const App: React.FC = () => {
           {migrationNote && (
             <div style={{
               margin: '0 auto 20px', maxWidth: 700, padding: '12px 18px',
-              background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.2)',
-              borderRadius: 12, fontSize: 13, color: '#86efac', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              background: 'var(--app-success-bg)', border: '1px solid var(--app-success-border)',
+              borderRadius: 12, fontSize: 13, color: 'var(--app-success-text)', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             }}>
               <span> {migrationNote}</span>
-              <button onClick={() => setMigrationNote(null)} style={{ background: 'none', border: 'none', color: '#4ade80', cursor: 'pointer', fontSize: 16 }}>✕</button>
+              <button onClick={() => setMigrationNote(null)} style={{ background: 'none', border: 'none', color: 'var(--app-success-text)', cursor: 'pointer', fontSize: 16 }}>✕</button>
             </div>
           )}
 
@@ -554,8 +581,8 @@ const App: React.FC = () => {
           {showKeyWarning && (
             <div style={{
               margin: '0 auto 20px', maxWidth: 700, padding: '14px 18px',
-              background: 'rgba(255,107,107,0.08)', border: '1px solid rgba(255,107,107,0.25)',
-              borderRadius: 14, fontSize: 13, color: '#ff9a9a', lineHeight: 1.6,
+              background: 'var(--app-danger-bg)', border: '1px solid var(--app-danger-border)',
+              borderRadius: 14, fontSize: 13, color: 'var(--app-danger-text)', lineHeight: 1.6,
             }}>
               <strong>⚠ API Key Missing</strong><br />{keyWarningMsg[settings.provider]}
             </div>
@@ -565,8 +592,8 @@ const App: React.FC = () => {
           {showEmpty && !showKeyWarning && (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 16, textAlign: 'center' }}>
               <div style={{ width: 64, height: 64, borderRadius: 20, background: 'linear-gradient(135deg,#7c6bff22,#b06bff22)', border: '1px solid rgba(124,107,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, marginBottom: 8 }}>✦</div>
-              <h1 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 28, color: '#c4c0d8', fontWeight: 400 }}>What can I help you with?</h1>
-              <p style={{ color: '#444', fontSize: 14, maxWidth: 380 }}>Ask anything, upload images or files, and explore ideas together.</p>
+              <h1 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 28, color: 'var(--app-text)', fontWeight: 400 }}>What can I help you with?</h1>
+              <p style={{ color: 'var(--app-text-muted)', fontSize: 14, maxWidth: 380 }}>Ask anything, upload images or files, and explore ideas together.</p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', maxWidth: 520, marginTop: 8 }}>
                 {['Explain quantum entanglement simply',
                 'Write a Python web scraper',
@@ -597,7 +624,7 @@ const App: React.FC = () => {
           )}
 
           {error && (
-            <div style={{ maxWidth: 760, margin: '16px auto 0', padding: '12px 16px', background: 'rgba(255,107,107,0.08)', border: '1px solid rgba(255,107,107,0.2)', borderRadius: 12, fontSize: 13, color: '#ff9a9a' }}>
+            <div style={{ maxWidth: 760, margin: '16px auto 0', padding: '12px 16px', background: 'var(--app-danger-bg)', border: '1px solid var(--app-danger-border)', borderRadius: 12, fontSize: 13, color: 'var(--app-danger-text)' }}>
               ⚠ {error}
             </div>
           )}
@@ -606,7 +633,7 @@ const App: React.FC = () => {
         </div>
 
         {/* Input box */}
-        <div style={{ padding: '12px 20px 16px', borderTop: '1px solid rgba(120,100,255,0.08)', background: 'rgba(10,10,15,0.95)', backdropFilter: 'blur(12px)', flexShrink: 0 }}>
+        <div style={{ padding: '12px 20px 16px', borderTop: '1px solid var(--app-border)', background: 'var(--app-panel)', backdropFilter: 'blur(12px)', flexShrink: 0 }}>
           <div style={{ maxWidth: 760, margin: '0 auto' }}>
             <div onDrop={handleDrop} onDragOver={e => e.preventDefault()} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(124,107,255,0.25)', borderRadius: 18, transition: 'border-color 0.2s', overflow: 'hidden' }}
               onFocusCapture={e => (e.currentTarget.style.borderColor = 'rgba(124,107,255,0.55)')}
@@ -619,11 +646,11 @@ const App: React.FC = () => {
                       {file.previewUrl ? <img src={file.previewUrl} alt={file.name} style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'cover', flexShrink: 0 }} /> : <span style={{ fontSize: 18, flexShrink: 0 }}>{fileIcon(file.mimeType)}</span>}
                       <div style={{ minWidth: 0 }}>
                         <div style={{ fontSize: 11, fontWeight: 500, color: '#c4b8ff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{file.name}</div>
-                        <div style={{ fontSize: 10, color: '#666' }}>{formatSize(file.size)}</div>
+                        <div style={{ fontSize: 10, color: 'var(--app-text-muted)' }}>{formatSize(file.size)}</div>
                       </div>
-                      <button onClick={() => handleRemoveAttachment(file.id)} style={{ position: 'absolute', top: 4, right: 6, background: 'none', border: 'none', color: '#666', cursor: 'pointer', fontSize: 11, lineHeight: 1, padding: 0 }}
+                      <button onClick={() => handleRemoveAttachment(file.id)} style={{ position: 'absolute', top: 4, right: 6, background: 'none', border: 'none', color: 'var(--app-text-muted)', cursor: 'pointer', fontSize: 11, lineHeight: 1, padding: 0 }}
                         onMouseEnter={e => (e.currentTarget.style.color = '#ff6b6b')}
-                        onMouseLeave={e => (e.currentTarget.style.color = '#666')}
+                        onMouseLeave={e => (e.currentTarget.style.color = 'var(--app-text-muted)')}
                       >✕</button>
                     </div>
                   ))}
@@ -633,18 +660,18 @@ const App: React.FC = () => {
                 <textarea ref={textareaRef} value={input} onChange={handleInputChange} onKeyDown={handleKeyDown} onPaste={handlePaste}
                   placeholder={attachments.length > 0 ? 'Add a message… (optional)' : `Message ${providerIcons[settings.provider]} ${activeModelLabel()}…`}
                   rows={1} disabled={isLoading}
-                  style={{ flex: 1, background: 'none', border: 'none', outline: 'none', color: '#ddd9f0', fontSize: 14, fontFamily: "'DM Sans', sans-serif", resize: 'none', lineHeight: 1.65, maxHeight: 180, overflowY: 'auto', paddingTop: 2, alignSelf: 'center' }}
+                  style={{ flex: 1, background: 'none', border: 'none', outline: 'none', color: 'var(--app-text)', fontSize: 14, fontFamily: "'DM Sans', sans-serif", resize: 'none', lineHeight: 1.65, maxHeight: 180, overflowY: 'auto', paddingTop: 2, alignSelf: 'center' }}
                 />
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-                  <button type="button" title="Attach file" onClick={() => fileInputRef.current?.click()} style={{ width: 34, height: 34, borderRadius: 9, background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', color: '#666', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}
+                  <button type="button" title="Attach file" onClick={() => fileInputRef.current?.click()} style={{ width: 34, height: 34, borderRadius: 9, background: 'transparent', border: '1px solid var(--app-border-soft)', color: 'var(--app-text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}
                     onMouseEnter={e => { const b = e.currentTarget as HTMLButtonElement; b.style.background = 'rgba(124,107,255,0.12)'; b.style.borderColor = 'rgba(124,107,255,0.35)'; b.style.color = '#a89fff'; }}
-                    onMouseLeave={e => { const b = e.currentTarget as HTMLButtonElement; b.style.background = 'transparent'; b.style.borderColor = 'rgba(255,255,255,0.1)'; b.style.color = '#666'; }}
+                    onMouseLeave={e => { const b = e.currentTarget as HTMLButtonElement; b.style.background = 'transparent'; b.style.borderColor = 'var(--app-border-soft)'; b.style.color = 'var(--app-text-muted)'; }}
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
                   </button>
-                  <button onClick={handleSend} disabled={!canSend} style={{ width: 34, height: 34, borderRadius: 9, border: 'none', background: canSend ? 'linear-gradient(135deg,#7c6bff,#b06bff)' : 'rgba(124,107,255,0.15)', color: canSend ? '#fff' : '#444', cursor: canSend ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', boxShadow: canSend ? '0 2px 12px rgba(124,107,255,0.45)' : 'none' }}>
+                  <button onClick={handleSend} disabled={!canSend} style={{ width: 34, height: 34, borderRadius: 9, border: 'none', background: canSend ? 'linear-gradient(135deg,#7c6bff,#b06bff)' : 'rgba(124,107,255,0.15)', color: canSend ? '#fff' : 'var(--app-text-muted)', cursor: canSend ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', boxShadow: canSend ? '0 2px 12px rgba(124,107,255,0.45)' : 'none' }}>
                     {isLoading
-                      ? <div style={{ width: 14, height: 14, border: '2px solid #555', borderTopColor: '#9a8fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                      ? <div style={{ width: 14, height: 14, border: '2px solid var(--app-text-muted)', borderTopColor: '#9a8fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
                       : <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
                     }
                   </button>
@@ -652,7 +679,7 @@ const App: React.FC = () => {
               </div>
             </div>
             <input ref={fileInputRef} type="file" multiple accept={ACCEPT} style={{ display: 'none' }} onChange={handleFileInput} />
-            <p style={{ textAlign: 'center', fontSize: 11, color: '#2e2e3a', marginTop: 8 }}>Enter to send · Shift+Enter for new line · paste or drop files to attach</p>
+            <p style={{ textAlign: 'center', fontSize: 11, color: 'var(--app-text-muted)', marginTop: 8 }}>Enter to send · Shift+Enter for new line · paste or drop files to attach</p>
           </div>
         </div>
       </div>
@@ -672,22 +699,22 @@ const App: React.FC = () => {
         @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        .markdown-content { color: #ddd9f0; }
+        .markdown-content { color: var(--app-text); }
         .markdown-content p { margin-bottom: 12px; line-height: 1.7; }
         .markdown-content p:last-child { margin-bottom: 0; }
-        .markdown-content h1, .markdown-content h2, .markdown-content h3 { font-family: 'DM Serif Display', serif; font-weight: 400; margin-top: 16px; margin-bottom: 8px; color: #e8e6f0; }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 { font-family: 'DM Serif Display', serif; font-weight: 400; margin-top: 16px; margin-bottom: 8px; color: var(--app-text); }
         .markdown-content h1 { font-size: 22px; } .markdown-content h2 { font-size: 18px; } .markdown-content h3 { font-size: 15px; }
-        .markdown-content code { font-family: 'DM Mono', monospace; font-size: 12.5px; background: rgba(124,107,255,0.1); border: 1px solid rgba(124,107,255,0.15); padding: 1px 6px; border-radius: 5px; color: #c4b8ff; }
-        .markdown-content pre code { background: none; border: none; padding: 0; color: #b8d4ff; font-size: 13px; line-height: 1.6; }
+        .markdown-content code { font-family: 'DM Mono', monospace; font-size: 12.5px; background: var(--app-markdown-code-bg); border: 1px solid rgba(124,107,255,0.15); padding: 1px 6px; border-radius: 5px; color: #7c6bff; }
+        .markdown-content pre code { background: none; border: none; padding: 0; color: var(--app-text-soft); font-size: 13px; line-height: 1.6; }
         .markdown-content ul, .markdown-content ol { padding-left: 20px; margin-bottom: 12px; }
         .markdown-content li { margin-bottom: 4px; line-height: 1.7; }
-        .markdown-content blockquote { border-left: 3px solid rgba(124,107,255,0.4); padding-left: 14px; color: #9a94b0; margin: 12px 0; font-style: italic; }
+        .markdown-content blockquote { border-left: 3px solid rgba(124,107,255,0.4); padding-left: 14px; color: var(--app-text-soft); margin: 12px 0; font-style: italic; }
         .markdown-content table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
-        .markdown-content th { background: rgba(124,107,255,0.12); padding: 8px 12px; text-align: left; border: 1px solid rgba(124,107,255,0.15); color: #c4b8ff; }
-        .markdown-content td { padding: 8px 12px; border: 1px solid rgba(255,255,255,0.06); }
+        .markdown-content th { background: rgba(124,107,255,0.12); padding: 8px 12px; text-align: left; border: 1px solid rgba(124,107,255,0.15); color: #7c6bff; }
+        .markdown-content td { padding: 8px 12px; border: 1px solid var(--app-border-soft); }
         .markdown-content a { color: #9a8fff; text-decoration: underline; }
-        .markdown-content strong { color: #e8e6f0; font-weight: 600; }
-        .markdown-content hr { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 16px 0; }
+        .markdown-content strong { color: var(--app-text); font-weight: 600; }
+        .markdown-content hr { border: none; border-top: 1px solid var(--app-border-soft); margin: 16px 0; }
       
       .markdown-content pre {
   position: relative;
@@ -695,8 +722,8 @@ const App: React.FC = () => {
   overflow-x: auto;
   overflow-y: hidden;
   white-space: pre;
-  background: rgba(0,0,0,0.4);
-  border: 1px solid rgba(255,255,255,0.07);
+  background: var(--app-markdown-pre-bg);
+  border: 1px solid var(--app-border-soft);
   border-radius: 12px;
   padding: 16px;
   box-sizing: border-box;
