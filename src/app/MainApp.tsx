@@ -360,7 +360,7 @@ const MainApp: React.FC = () => {
         .markdown-content h1, .markdown-content h2, .markdown-content h3 { font-family: 'DM Serif Display', serif; font-weight: 400; margin-top: 16px; margin-bottom: 8px; color: var(--app-text); }
         .markdown-content h1 { font-size: 22px; } .markdown-content h2 { font-size: 18px; } .markdown-content h3 { font-size: 15px; }
         .markdown-content code { font-family: 'DM Mono', monospace; font-size: 12.5px; background: var(--app-markdown-code-bg); border: 1px solid rgba(124,107,255,0.15); padding: 1px 6px; border-radius: 5px; color: #7c6bff; }
-        .markdown-content pre code { background: none; border: none; padding: 0; color: var(--app-text-soft); font-size: 13px; line-height: 1.6; }
+        .markdown-content pre code { background: none; border: none; padding: 0px; color: var(--app-text-soft); font-size: 13px; line-height: 1.6; }
         .markdown-content ul, .markdown-content ol { padding-left: 20px; margin-bottom: 12px; }
         .markdown-content li { margin-bottom: 4px; line-height: 1.7; }
         .markdown-content blockquote { border-left: 3px solid rgba(124,107,255,0.4); padding-left: 14px; color: var(--app-text-soft); margin: 12px 0; font-style: italic; }
@@ -370,18 +370,41 @@ const MainApp: React.FC = () => {
         .markdown-content a { color: #9a8fff; text-decoration: underline; }
         .markdown-content strong { color: var(--app-text); font-weight: 600; }
         .markdown-content hr { border: none; border-top: 1px solid var(--app-border-soft); margin: 16px 0; }
-        .markdown-content pre {
-          position: relative;
-          max-width: 100%;
-          overflow-x: auto;
-          overflow-y: hidden;
-          white-space: pre;
-          background: var(--app-markdown-pre-bg);
-          border: 1px solid var(--app-border-soft);
-          border-radius: 12px;
-          padding: 16px;
-          box-sizing: border-box;
-        }
+.markdown-content pre {
+  position: relative;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  background: var(--app-markdown-pre-bg);
+  border: 1px solid var(--app-border-soft);
+  border-radius: 12px;
+
+//   padding: 14px 16px; /* move padding here */
+
+  box-sizing: border-box;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(124,107,255,0.4) transparent;
+}
+
+/* WebKit browsers (Chrome, Edge, Safari) */
+.markdown-content pre::-webkit-scrollbar {
+  height: 4px; 
+}
+
+.markdown-content pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.markdown-content pre::-webkit-scrollbar-thumb {
+  background: rgba(124,107,255,0.4);
+  border-radius: 10px;
+}
+
+.markdown-content pre::-webkit-scrollbar-thumb:hover {
+  background: rgba(124,107,255,0.6);
+}
+
         .markdown-content {
           max-width: 100%;
           overflow-wrap: break-word;

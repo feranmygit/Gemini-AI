@@ -195,7 +195,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
                             onClick={handleCopy}
                             style={{
                               position: 'absolute',
-                              top: -10,
+                              top: -1,
                               right: 8,
                               background: 'rgba(255,255,255,0.08)',
                               border: '1px solid rgba(255,255,255,0.15)',
@@ -228,7 +228,9 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
 
                           <pre>
                             <code className={className} {...props}>
-                              {children}
+                              <div className="p-4">
+                                {children}
+                              </div>
                             </code>
                           </pre>
                         </div>
