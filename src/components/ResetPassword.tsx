@@ -63,7 +63,7 @@ export default function ResetPassword() {
       >
         {/* Header */}
         <div style={{ marginBottom: 24 }}>
-          <div style={{ fontSize: 26, marginBottom: 8 }}>🔐</div>
+          {/* <div style={{ fontSize: 26, marginBottom: 8 }}>🔐</div> */}
           <h2
             style={{
               fontFamily: "'DM Serif Display', serif",
