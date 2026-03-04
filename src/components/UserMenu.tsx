@@ -48,7 +48,7 @@ const UserMenu: React.FC<Props> = ({ user, onSignOut }) => {
       {/* Dropdown */}
       {open && (
         <div style={{
-          position: 'absolute', top: 44, right: 0, zIndex: 300,
+          position: 'absolute', top: 44, right: 0, zIndex: 1000,
           background: 'linear-gradient(180deg, #1c1a2e 0%, #141220 100%)',
           border: '1px solid rgba(124,107,255,0.25)', borderRadius: 16,
           boxShadow: '0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(124,107,255,0.1)',

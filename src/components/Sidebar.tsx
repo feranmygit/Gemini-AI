@@ -107,7 +107,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           {authState === 'guest' && (
             <div>
               <div style={{ fontSize: 11, color: 'var(--app-text-soft)', marginBottom: 10, lineHeight: 1.5, padding: '0 2px' }}>
-                Guest mode — chats are lost on page refresh
+                Guest mode — chats may get lost 
               </div>
               <div style={{ display: 'flex', gap: 7 }}>
                 <button onClick={onSignUp} style={{
